@@ -113,6 +113,27 @@
 - ln -s file soft-file # creates a soft link pointing to file
 - ln file hard-file # creates a hard link that points to the content of file so even if file deleted it persist
 
+## GIT COMMANDS ###
+- git branch -M main # rename current local branch to main
+- git branch # show local branches
+- git remote -v # check remote branches
+- git fetch --all # get all remote branches
+
+- git checkout -b newbranch # creates a new local branch 
+- git add .
+- git commit -m "new branch changes"
+- git push # automatically creates the remote branch
+
+- git branch --set-upstream-to=origin/newbranch newbranch # binds the local branch to the remote branch so that it can track it, origin is to tell its the remote one
+
+
+
+
+
+
+
+ 
+
 
 
 
