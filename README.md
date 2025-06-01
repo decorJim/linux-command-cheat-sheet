@@ -126,6 +126,12 @@
 
 - git branch --set-upstream-to=origin/newbranch newbranch # binds the local branch to the remote branch so that it can track it, origin is to tell its the remote one
 
+- git init # make an existing folder into a git folder
+- git log --all # check all the commits of the branch including where the head is pointed to
+- git status
+- git rm --cached file # remove something from commit 
+
+
 
 
 
