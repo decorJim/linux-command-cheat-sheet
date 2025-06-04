@@ -17,6 +17,9 @@
 - sudo chown -R owner myfolder # chown changes the owner of myfolder to owner -R recursive all inside
 - sudo chgrp -R newGRoup myfolder # chgrp change the folder's group -R recursive all inside
 
+## DISK USAGE ##
+- df -h
+
 
 ## UNAME PRINTS INFO ABOUT YOUR SYSTEM ##
 - uname -m # shows the CPU architecture
@@ -130,6 +133,36 @@
 - git log --all # check all the commits of the branch including where the head is pointed to
 - git status
 - git rm --cached file # remove something from commit 
+
+- git checkout main # go to main branch from feature branch
+- git pull # pull any changes there
+- git checkout feature # go back to main branch
+- git merge main # put new main changes into the current branch
+- git checkout main # go back to main
+- git merge feature # merge changes from feature into main
+- git push
+
+
+## KUBERNETES ###
+- kubectl get ns # get all namespaces so label like dev or prod where we group all the ressource
+- kubectl get pods -n c418-victor-prod # shows all pod in the namespace c418-victor-prod
+- kubectl logs orderbookapi-758cb97d5-4h5q5 -n c418-victor-prod | grep -i buy # get all logs and filter with buy keyword from specific pod orderbookapi-758cb97d5-4h5q5
+
+- kubectl get deployments -n c418-victor-prod # get all the deployments from the namespace c418-victor-prod
+- kubectl get deployments -o wide -n c418-victor-prod # gets all deployments but with a bit more details
+- kubectl describe deployment mysqld-exporter -n c418-victor-prod # shows details of a specific Kind:Deployment mysqld-exporter in the namespace c418-victor-prod
+
+- kubectl get deployment mysqld-exporter -n c418-victor-prod -o yaml # gets the deployment yaml file of mysqld-exporter of the namespace c418-victor-prod
+
+- kubectl logs --help # shows options for kubectl
+- kubectl logs orderbookapi-758cb97d5-ggfcw -n c418-victor-prod --since=1h # logging for the pod orderbookapi-758cb97d5-ggfcw from the namespace c418-victor-prod since 1h
+
+- kubectl get pods -n c418-victor-prod \
+  -o custom-columns=POD:.metadata.name,CONTAINERS:.spec.containers[*].name # shows all pods in their containers
+  
+- kubectl logs deploy/orderbookfe -n c418-victor-prod --since=5m # gets logs from deployment 
+
+
 
 
 
