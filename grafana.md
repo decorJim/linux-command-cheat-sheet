@@ -58,6 +58,118 @@ We can use a regular expression to search for logs related to the API. The .* is
 - {app="ingress-nginx"} |~ `"host.*api.computerlab.online"` |~ `"upstream_status": 2[0-9]{2}` |~ `"upstream_response_time": 0.0[0-9]{0,}`
  filter for requests that are faster than 0.1 seconds.
 
- 
+ Prometheus FastAPI Instrumentor
+
+ - sum(rate(nginx_ingress_controller_requests{exported_namespace="c418-team04-prod",ingress="orderbook",status=~"(2|3).*",exported_service="orderbookfe"}[1h]))
+/
+sum(rate(nginx_ingress_controller_requests{exported_namespace="c418-team04-prod",ingress="orderbook", status!~"4.*",exported_service="orderbookfe"}[1h]))
+* 100
+
+Consider the code below that uses metrics from NGINX to monitor the Front End (not the API) to calculate the percentage of 2xx or 3xx requests / all non 4xx requests per hour.
+
+
+- sum(rate(nginx_ingress_controller_response_duration_seconds_bucket{exported_namespace="c418-team04-prod",ingress="orderbook",le="0.01",exported_service="orderbookfe"}[1h]))
+/
+sum(rate(nginx_ingress_controller_response_duration_seconds_bucket{exported_namespace="c418-team04-prod",ingress="orderbook", le="+Inf",exported_service="orderbookfe"}[1h]))
+* 100
+
+We can use the ingress-controller to calculate latency as well
+
+- rate(
+    container_memory_working_set_bytes {
+        namespace="c418-team04-prod",
+        container="orderbookapi"
+    } [2m]
+)
+
+Prometheus also obtains metrics from the Kubernetes cluster, such as statistics on your container's memory.
+
+- rate(
+    container_cpu_usage_seconds_total{
+        namespace="c418-team04-prod",
+        container="orderbookapi"
+    } [2m]
+)
+
+CPU usage of your containers
+
+- kube_deployment_status_replicas_available{
+    namespace="c418-team04-prod",
+    deployment="orderbookdb"
+}
+
+displays the number of replicas for the database deployment
+
+- mysql_up{
+    namespace="c418-team04-prod"
+}
+
+check if the database is up
+
+- rate(
+  http_request_duration_seconds_bucket{ 
+    handler!~"(none|/metrics)",
+    le="0.5",
+    namespace="c418-c418-team04-prod"
+  }[2m])
+
+  It is the rate of request with latency less than or equal to (le) 0.5 seconds
+
+- sum(                                                    # Number of all requests faster than 0.5 seconds
+    rate(
+        http_request_duration_seconds_bucket{
+            handler!~"(none|/metrics)",
+            le="0.5",
+            namespace="c418-team04-prod"
+        }
+    )
+)
+ / 
+sum                                                       # all requests
+  (rate(
+    http_request_duration_seconds_bucket{
+      handler!~"(none|/metrics)",
+      le="+Inf",# infinity, or all request
+      namespace="c418-team04-prod"
+    } [2m])
+  )
+
+- sum by (handler)
+  (rate(
+    http_request_duration_seconds_bucket{
+      handler!~"(none|/metrics)",
+      le="0.5",
+      namespace="c418-team04-prod"
+    }[$__rate_interval])
+  )
+  /
+sum by (handler)
+  (rate(
+    http_request_duration_seconds_bucket{
+      handler!~"(none|/metrics)",
+      le="+Inf",
+      namespace="c418-team04-prod"
+      }[$__rate_interval])
+  )
+
+group all series with the same handler and sum those
+
+- sum by (handler) (
+  rate(http_request_duration_seconds_bucket{
+    handler="/stock_quote",
+    le="0.5",
+    namespace="c418-team04-prod"
+  }[$__rate_interval])
+)
+/
+sum by (handler) (
+  rate(http_request_duration_seconds_bucket{
+    handler="/stock_quote",
+    le="+Inf",
+    namespace="c418-team04-prod"
+  }[$__rate_interval])
+)
+
+Filter for only stock_quote
 
 
