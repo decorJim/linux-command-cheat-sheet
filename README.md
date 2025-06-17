@@ -24,6 +24,7 @@
 ## UNAME PRINTS INFO ABOUT YOUR SYSTEM ##
 - uname -m # shows the CPU architecture
 - uname -a # shows 
+- netstat 1 1
 
 ## CHECK DOCUMENTATION FOR COMMAND LINE ##
 - man command # show documentation of the command
@@ -142,6 +143,14 @@
 - git merge feature # merge changes from feature into main
 - git push
 
+## JSON ##
+
+- jq '.' user_data.json
+- jq '.[0].ip' user_data.json # access first element ip
+- jq '.[].ip' user_data.json | sort | uniq -c > test1.log # for every element extract ip field 
+
+- jq '.[]|.ip' user_data.json | sort | uniq -c
+
 
 ## KUBERNETES ###
 - kubectl get ns # get all namespaces so label like dev or prod where we group all the ressource
@@ -161,6 +170,15 @@
   -o custom-columns=POD:.metadata.name,CONTAINERS:.spec.containers[*].name # shows all pods in their containers
   
 - kubectl logs deploy/orderbookfe -n c418-victor-prod --since=5m # gets logs from deployment 
+
+## create own command ##
+- vi reverse # create the file
+- #!/bin/bash
+  echo "$1" | rev
+- Esc + :wq
+- chmod +x reverse
+- mv reverse /usr/local/bin/
+
 
 
 
