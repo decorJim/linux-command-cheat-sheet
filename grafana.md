@@ -1,6 +1,6 @@
 grafana
 
-logQL
+###################### logQL ###########################
 
 - {
   namespace="c418-team04-prod",
@@ -47,18 +47,55 @@ count_over_time(
 
 percentage of logs per minute are heartbeat logs?
 
-- {namespace="c418-team04-prod"} |= `"side": "buy"` | json | Price > 100 | OrderQty > 10
+- { namespace="c418-team04-prod", app="orderbookapi" } |= `"side": "buy"` | json | Price > 100 
 
-Parse the log entry by piping to json, then pipe it to the key Price. Only return logs where the price is greater than 100 and the order quantity is greater than 10.
+Parse the log entry by piping to json, then pipe it to the key Price. Only return logs where the price is greater than 100.
 
 - { app="ingress-nginx" } |~ `"host.*api.computerlab.online"`
 
 We can use a regular expression to search for logs related to the API. The .* is called a greedy search. The dot will match any character, and the * will match any number of characters before the word API.
 
+- {app="ingress-nginx"} |~ `"host.*api.computerlab.online"` |~ `"upstream_status": 2[0-9]{2}`
+Fetch all log lines matching label filters. Return log lines that match a RE2 regex pattern. "host.*api.computerlab.online". Return log lines that match a RE2 regex pattern. "upstream_status": 2[0-9]{2}.
+
 - {app="ingress-nginx"} |~ `"host.*api.computerlab.online"` |~ `"upstream_status": 2[0-9]{2}` |~ `"upstream_response_time": 0.0[0-9]{0,}`
  filter for requests that are faster than 0.1 seconds.
 
- Prometheus FastAPI Instrumentor
+############################### Prometheus ##############################
+
+- http_requests_total{
+  handler="/stock_quote",
+  method="GET",status="2xx" ,
+  namespace="c418-team04-prod"
+}
+Fetch all series matching metric name and label filters.
+
+- sum(http_requests_total{ # number of 4xx request
+  handler="/stock_quote",
+  namespace="c418-team04-prod",
+  method="GET",
+  status="2xx"
+})
+/  # divide by
+sum(http_requests_total{ # total number of request
+  handler="/stock_quote",
+  namespace="c418-team04-prod",
+  method="GET",
+  status!="4xx"
+}) * 100
+
+percentage of stock quote working
+
+- sum(rate(nginx_ingress_controller_requests{exported_namespace="c418-team04-prod",ingress="orderbook",status=~"(2|3).*",exported_service="orderbookfe"}[1w]))
+/
+sum(rate(nginx_ingress_controller_requests{exported_namespace="c418-team04-prod",ingress="orderbook", status!~"4.*",exported_service="orderbookfe"}[1w]))
+* 100
+
+for a week percentage of successful request in orderbookfe
+
+
+
+####################### Prometheus FastAPI Instrumentor ###########3#####
 
  - sum(rate(nginx_ingress_controller_requests{exported_namespace="c418-team04-prod",ingress="orderbook",status=~"(2|3).*",exported_service="orderbookfe"}[1h]))
 /
