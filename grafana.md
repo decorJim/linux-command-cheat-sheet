@@ -209,4 +209,7 @@ sum by (handler) (
 
 Filter for only stock_quote
 
+- histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{namespace="c418-team01-prod"}[5m])))
+
+
 
