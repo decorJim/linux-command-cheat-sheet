@@ -153,6 +153,8 @@
 
 
 ## KUBERNETES ###
+- k8slogin.computerlab.online
+- kubectl get kustomizations -A | grep c418-team04
 - kubectl get ns # get all namespaces so label like dev or prod where we group all the ressource
 - kubectl get pods -n c418-victor-prod # shows all pod in the namespace c418-victor-prod
 - kubectl logs orderbookapi-758cb97d5-4h5q5 -n c418-victor-prod | grep -i buy # get all logs and filter with buy keyword from specific pod orderbookapi-758cb97d5-4h5q5

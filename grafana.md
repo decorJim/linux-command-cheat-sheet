@@ -211,5 +211,27 @@ Filter for only stock_quote
 
 - histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{namespace="c418-team01-prod"}[5m])))
 
+######################## SLI #############################
+- sum(
+    rate(                                   # How many requests per second, on average, were completed in under 0.5s over the past week?
+      http_request_duration_seconds_bucket{
+        namespace="c418-team04-prod",
+        handler="/exchange_rate",
+        le="0.5"
+      }[1w]
+    )
+  )
+  /
+  sum(
+    rate(
+      http_request_duration_seconds_count{
+        namespace="c418-team04-prod",
+        handler="/exchange_rate"
+      }[1w]
+    )
+  ) * 100
+
+
+
 
 
