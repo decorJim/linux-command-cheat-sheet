@@ -238,4 +238,47 @@ Filter for only stock_quote
 
 
 
+avg (                                     # the average cpu time usage across all containers
+  rate(                                   # for the last 5 min window the average time of cpu usage in second per container
+    container_cpu_usage_seconds_total {   # the total usage of cpu per container in seconds of all time
+      namespace="c418-team04-prod",       # only include those in the namespace 
+      container!=""                       # not include container responsible for pod lifecycle or networking
+    } [5m]
+  )
+)
+
+
+
+
+count_over_time                               # count all the average cpu usage across containers in 5 min interval that were less than 0.65
+(
+  (
+    avg(                                      # the average cpu time usage across all containers 
+      rate(                                   # for the last 5 min window the average time of cpu usage in second per container
+        container_cpu_usage_seconds_total{    # the total usage of cpu per container in seconds of all time
+          namespace="c418-team04-prod", 
+          container!=""
+        } [5m]                                # count for every 5 min window through the day
+      )
+    ) < 0.65                                  
+  ) [1d:5m]                                   # count by splitting a day into 5 min interval
+)
+/
+(
+  count_over_time(                            # count all the average cpu usage across containers in 5 min interval
+    avg(
+      rate(
+        container_cpu_usage_seconds_total{
+          namespace="c418-team04-prod", 
+          container!=""
+        } [5m]
+      )
+    ) [1d:5m]
+  )
+)
+* 100
+
+
+
+
 
