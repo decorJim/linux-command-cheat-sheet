@@ -181,6 +181,8 @@
 - chmod +x reverse
 - mv reverse /usr/local/bin/
 
+## export ##
+- export -p # prints all exported env variables
 
 
 
