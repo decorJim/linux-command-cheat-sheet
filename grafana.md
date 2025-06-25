@@ -281,4 +281,36 @@ count_over_time                               # count all the average cpu usage 
 
 
 
+count_over_time(
+  (  
+    avg(
+      container_memory_working_set_bytes{
+        namespace="c418-team04-prod",
+        container!=""
+      }
+    )/
+    avg(
+      cluster_autoscaler_cluster_memory_current_bytes
+    ) < 0.85
+  ) [1d:5m]
+)
+/
+count_over_time(
+  (  
+    avg(
+      container_memory_working_set_bytes{
+        namespace="c418-team04-prod",
+        container!=""
+      }
+    )
+  ) [1d:5m]
+) * 100
+  
+
+
+
+
+
+
+
 
