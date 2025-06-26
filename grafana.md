@@ -212,16 +212,14 @@ Filter for only stock_quote
 - histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{namespace="c418-team01-prod"}[5m])))
 
 ######################## SLI #############################
-- sum(                                        # sum all histogram values 0.2 + 0.1 + 0.4 = 0.7 
-    rate(                                     # for each second what is the average 
-                                              # latency that are faster than 0.5 s
-                                              # histogram values (0-1s, 0.2 avg) (1-2s, 0.1 avg) (2-3s, 0.4 avg) for 1 week
-                                         
-      http_request_duration_seconds_bucket{   # request of all time how many of
-        namespace="c418-team04-prod",         # /exchange were faster and equal
-        handler="/exchange_rate",             # to 0.5 s 
+- sum(                                        # add result of all pods duplicate or restart to not impact result
+    rate(                                     # for the whole there was an increase of 6000 requests that fits these criteria
+                                              # what is the average per second 6000/ 1 week in seconds                
+      http_request_duration_seconds_bucket{   # total request of /exchange_rate that was faster than 0.5s latency ever since pod started
+        namespace="c418-team04-prod",         
+        handler="/exchange_rate",             
         le="0.5"
-      }[1w]
+      } [1w]
     
     )
   )
@@ -234,6 +232,26 @@ Filter for only stock_quote
       }[1w]
     )
   ) * 100
+
+-   sum(
+      rate(
+        http_requests_total{
+          namespace="c418-team04-prod",
+          handler="/trade",
+          status=~"2.."
+        } [1w]
+      )
+    )
+    /
+    sum(
+      rate(
+        http_requests_total{
+          namespace="c418-team04-prod",
+          handler="/trade",
+          status!="4.."                       # all request not coded 4xx aka 2xx, 5xx etc
+        } [1w]
+      )
+    ) * 100
 
 
 
@@ -250,22 +268,24 @@ avg (                                     # the average cpu time usage across al
 
 
 
-count_over_time                               # count all the average cpu usage across containers in 5 min interval that were less than 0.65
+count_over_time                              # apply that function for all 5 min within 1 day count only those less than 
+                                             # 0.65                  
 (
   (
-    avg(                                      # the average cpu time usage across all containers 
-      rate(                                   # for the last 5 min window the average time of cpu usage in second per container
-        container_cpu_usage_seconds_total{    # the total usage of cpu per container in seconds of all time
+    avg(                                     # the average of all containers within that last 5 min                         
+      rate(                                  # for the last 5 min if it went from 10000s to 12000s total increase 
+                                             # of 2000s we take this divided by 5m in seconds per container                      
+        container_cpu_usage_seconds_total{   # the toal cpu usage time ever since each container started 
           namespace="c418-team04-prod", 
           container!=""
-        } [5m]                                # count for every 5 min window through the day
+        } [5m]                                
       )
     ) < 0.65                                  
-  ) [1d:5m]                                   # count by splitting a day into 5 min interval
+  ) [1d:5m]                                   
 )
 /
 (
-  count_over_time(                            # count all the average cpu usage across containers in 5 min interval
+  count_over_time(                            
     avg(
       rate(
         container_cpu_usage_seconds_total{
@@ -284,7 +304,7 @@ count_over_time                               # count all the average cpu usage 
 count_over_time(                             # the number of 5 min interval where the proportion of used memory is less than 0.85
   (  
     avg(                                     # average of used memory across containers
-      container_memory_working_set_bytes{    # memory in bytes actively used per container
+      container_memory_working_set_bytes{    # memory in bytes actively used per container in the last second
         namespace="c418-team04-prod",
         container!=""
       }
