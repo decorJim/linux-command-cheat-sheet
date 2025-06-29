@@ -112,6 +112,9 @@
 ## NETWORK INTERFACES ##
 - ip address # show all the network interfaces
 - sudo ss -tlpn # -p shows all process -l listening to -t tcp connection -n ip and port 
+- nslookup example.com # query DNS to obtain domain name or IP address mapping
+- nslookup 8.8.8.8 # perform a reverse lookup to find the domain name
+- traceroute example.com # the path that packets take to reach a network host
 
 ## LINKS ##
 - ln -s file soft-file # creates a soft link pointing to file
