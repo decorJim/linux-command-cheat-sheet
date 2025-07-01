@@ -115,6 +115,7 @@
 - nslookup example.com # query DNS to obtain domain name or IP address mapping
 - nslookup 8.8.8.8 # perform a reverse lookup to find the domain name
 - traceroute example.com # the path that packets take to reach a network host
+- dig example.com MX # filter for specific DNS record MX
 
 ## LINKS ##
 - ln -s file soft-file # creates a soft link pointing to file
