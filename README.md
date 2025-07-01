@@ -116,6 +116,7 @@
 - nslookup 8.8.8.8 # perform a reverse lookup to find the domain name
 - traceroute example.com # the path that packets take to reach a network host
 - dig example.com MX # filter for specific DNS record MX
+- dig -x 8.8.8.8 # reverse DNS lookup using ip
 
 ## LINKS ##
 - ln -s file soft-file # creates a soft link pointing to file
