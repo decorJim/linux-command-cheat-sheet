@@ -117,6 +117,10 @@
 - traceroute example.com # the path that packets take to reach a network host
 - dig example.com MX # filter for specific DNS record MX
 - dig -x 8.8.8.8 # reverse DNS lookup using ip
+- sudo lsof -i -P # know if your machine is listening for incoming connections. Remember, 
+                  # everything in Linux is a file. Therefore, we can use the list open files (lsof) command to see what ports are open and to what hosts.
+
+
 
 ## LINKS ##
 - ln -s file soft-file # creates a soft link pointing to file
