@@ -120,6 +120,7 @@
 - sudo lsof -i -P # know if your machine is listening for incoming connections. Remember, 
                   # everything in Linux is a file. Therefore, we can use the list open files (lsof) command to see what ports are open and to what hosts.
 - ss # see how many established connections are on your machine and what protocol they are using
+- ifconfig # To see information on each of your network interfaces
 
 
 
